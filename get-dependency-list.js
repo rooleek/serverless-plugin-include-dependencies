@@ -19,6 +19,8 @@ module.exports = function(filename, serverless, cache) {
   const filePaths = new Set();
   const modulesToProcess = [];
   const localFilesToProcess = [filename];
+  const layers = serverless.config.serverless.service && serverless.config.serverless.service.layers || {};
+  const namespaces = Object.keys(layers).map((k)=> layers[k].namespace) || [];
 
   function handle(name, basedir, optionalDependencies, peerDependenciesMeta) {
     const moduleName = requirePackageName(name.replace(/\\/, '/'));
@@ -29,6 +31,10 @@ module.exports = function(filename, serverless, cache) {
     }
 
     try {
+      if(namespaces.includes(moduleName)){
+        return;
+      }
+
       const pathToModule = resolve.sync(path.join(moduleName, 'package.json'), { basedir });
       const pkg = readPkgUp.sync({ cwd: pathToModule });
 
@@ -38,7 +44,7 @@ module.exports = function(filename, serverless, cache) {
         if (cache) {
           cache.add(cacheKey);
         }
-  
+
       } else {
         // TODO: should we warn here?
       }
