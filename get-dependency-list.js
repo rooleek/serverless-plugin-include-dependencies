@@ -31,7 +31,7 @@ module.exports = function(filename, serverless, cache) {
     }
 
     try {
-      if(namespaces.includes(moduleName)){
+      if(name.indexOf('/opt') === 0){
         return;
       }
 
