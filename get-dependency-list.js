@@ -19,8 +19,7 @@ module.exports = function(filename, serverless, cache) {
   const filePaths = new Set();
   const modulesToProcess = [];
   const localFilesToProcess = [filename];
-  const layers = serverless.config.serverless.service && serverless.config.serverless.service.layers || {};
-  const namespaces = Object.keys(layers).map((k)=> layers[k].excludePath) || [];
+  const excludeLayersPath = serverless.variables.service && serverless.variables.service.custom && serverless.variables.service.custom.excludeLayersPath || [];
 
   function handle(name, basedir, optionalDependencies, peerDependenciesMeta) {
     const moduleName = requirePackageName(name.replace(/\\/, '/'));
@@ -31,7 +30,7 @@ module.exports = function(filename, serverless, cache) {
     }
 
     try {
-      const result = namespaces.find((v) => `${name}`.indexOf(v) !== -1)
+      const result = excludeLayersPath.find((v) => `${name}`.indexOf(v) !== -1)
 
       if(result){
         return;
