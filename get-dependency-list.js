@@ -20,7 +20,7 @@ module.exports = function(filename, serverless, cache) {
   const modulesToProcess = [];
   const localFilesToProcess = [filename];
   const layers = serverless.config.serverless.service && serverless.config.serverless.service.layers || {};
-  const namespaces = Object.keys(layers).map((k)=> layers[k].namespace) || [];
+  const namespaces = Object.keys(layers).map((k)=> layers[k].excludePath) || [];
 
   function handle(name, basedir, optionalDependencies, peerDependenciesMeta) {
     const moduleName = requirePackageName(name.replace(/\\/, '/'));
@@ -31,7 +31,9 @@ module.exports = function(filename, serverless, cache) {
     }
 
     try {
-      if(name.indexOf('/opt') === 0){
+      const result = namespaces.find((v) => `${name}`.indexOf(v) !== -1)
+
+      if(result){
         return;
       }
 
