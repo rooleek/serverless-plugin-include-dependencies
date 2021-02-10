@@ -31,7 +31,7 @@ module.exports = function(filename, serverless, cache) {
 
     try {
       const result = excludeLayersPath.find((v) => `${name}`.indexOf(v) !== -1)
-
+      console.log('filename %s, name %s, basedir %basedir', filename, name, basedir);
       if(result){
         return;
       }
